@@ -1,26 +1,29 @@
 #include <stdio.h>
-#include <main.h>
 
-void fibonacci_sequence(int n, int sequence[]) {
-    /* Computes the first n numbers of the Fibonacci sequence */
-    sequence[0] = 1;
-    sequence[1] = 2;
-    for (int i = 2; i < n; i++) {
-        sequence[i] = sequence[i-1] + sequence[i-2];
-    }
-}
+/**
+ * main - Prints first 50 Fibonacci numbers, starting with 1 and 2,
+ *        separated by a comma followed by a space.
+ *
+ * Return: Always 0.
+ */
+int main(void)
+{
+	int count;
+	unsigned long fib1 = 0, fib2 = 1, sum;
 
-int main() {
-    int n = 50;
-    int fib_sequence[n];
+	for (count = 0; count < 50; count++)
+	{
+		sum = fib1 + fib2;
+		printf("%lu", sum);
 
-    fibonacci_sequence(n, fib_sequence);
+		fib1 = fib2;
+		fib2 = sum;
 
-    // Print the first 50 Fibonacci numbers separated by commas
-    for (int i = 0; i < n-1; i++) {
-        printf("%d, ", fib_sequence[i]);
-    }
-    printf("%d\n", fib_sequence[n-1]);
+		if (count == 49)
+			printf("\n");
+		else
+			printf(", ");
+	}
 
-    return 0;
+	return (0);
 }

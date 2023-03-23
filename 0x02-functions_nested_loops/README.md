@@ -13,7 +13,7 @@ What you should learn from this project:
 
 ---
 
-### [0. _putchar](./0-holberton.c)
+### [0. _putchar](./0-putchar.c)
 * Write a program that prints Holberton, followed by a new line.
 
 ### [1. I sometimes suffer from insomnia. And when I can't fall asleep, I play what I call the alphabet game](./1-alphabet.c)
@@ -46,10 +46,7 @@ What you should learn from this project:
 ### [10. a + b](./10-add.c)
 * Write a function that adds two integers and returns the result.
 
-### [11. Holberton School, 98 Battery Street, San Francisco CA 94111](./11-print_to_98.c)
+### [11.  98 Battery Street, San Francisco CA 94111](./11-print_to_98.c)
 * Write a function that prints all natural numbers from n to 98, followed by a new line.
 
 ---
-
-## Author
-* **Derrick Gee** - [kai-dg](https://github.com/kai-dg)

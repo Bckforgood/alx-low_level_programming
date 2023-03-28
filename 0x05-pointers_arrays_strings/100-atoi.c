@@ -1,62 +1,27 @@
 #include "main.h"
-/**
- * _pow - To find the power of a number raised to another
- * @a: base
- * @b: power
- *
- * Return: returns the answer
- */
 
-int _pow(int a, int b)
-{
-	int i, sol = 1;
-
-	i = b - 1;
-	while (i != 0)
-	{
-		sol = sol * a;
-		i--;
-	}
-	return (sol);
-}
 /**
- * _atoi - a function that convert a string to an integer.
- * @s: character pointer variable
+ * _atoi - convert a string to an integer
+ * @s: the string to convert
  *
- * Return: the integer
+ * Return: the integer value of the string
  */
 int _atoi(char *s)
 {
-	unsigned int i, sign, j, num, conv, sum;
+        int res = 0;
+        int sign = 1;
+        int i = 0;
 
-	j = 0;
-	sign = 1;
-	for (i = 0; s[i] != '\0'; i++)
-	{
-		if (s[i] == '-')
-		{
-			sign *= -1;
-		}
+        while (s[i] != '\0') {
+                if (s[i] == '-') {
+                        sign = -sign;
+                } else if (s[i] >= '0' && s[i] <= '9') {
+                        res = res * 10 + (s[i] - '0');
+                } else if (res > 0) {
+                        break;
+                }
+                i++;
+        }
 
-		if (s[i] >= 48 && s[i] <= 57)
-			j++;
-
-		if (j > 0 && (*(s + i) < 48 || *(s + i) > 57))
-			break;
-	}
-
-
-	sum = 0;
-	for (i = 0; s[i] != '\0'; i++)
-	{
-		if (s[i] >= 48 && s[i] <= 57)
-		{
-			conv = (int)s[i] - 48;
-
-			num = conv * _pow(10, j);
-			sum += num;
-			j--;
-		}
-	}
-	return (sum * sign);
+        return sign * res;
 }

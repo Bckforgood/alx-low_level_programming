@@ -19,14 +19,12 @@ int _pow(int a, int b)
 	}
 	return (sol);
 }
-
 /**
  * _atoi - a function that convert a string to an integer.
  * @s: character pointer variable
  *
  * Return: the integer
  */
-
 int _atoi(char *s)
 {
 	unsigned int i, sign, j, num, conv, sum;
@@ -62,4 +60,3 @@ int _atoi(char *s)
 	}
 	return (sum * sign);
 }
-

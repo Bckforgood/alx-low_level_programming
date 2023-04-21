@@ -2,10 +2,10 @@
 #include <stdarg.h>
 
 /**
- * sum_them_all - Sums all its parameters.
- * @n: The number of parameters.
+ * sum_them_all - Sums all its parameters
+ * @n: The number of parameters
  *
- * Return: The sum of all parameters.
+ * Return: The sum of all parameters
  */
 int sum_them_all(const unsigned int n, ...)
 {
@@ -25,4 +25,3 @@ int sum_them_all(const unsigned int n, ...)
 
     return (sum);
 }
-

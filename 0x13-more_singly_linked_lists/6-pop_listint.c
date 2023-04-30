@@ -8,18 +8,18 @@
  */
 int pop_listint(listint_t **head)
 {
-        int data;
-        listint_t *temp;
+	int data;
+	listint_t *temp;
 
-        if (*head == NULL) /* empty list */
-                return (0);
+	if (*head == NULL) /* empty list */
+		return (0);
 
-        data = (*head)->n; /* store head node's data */
-        temp = *head; /* save head node pointer */
+	data = (*head)->n; /* store head node's data */
+	temp = *head; /* save head node pointer */
 
-        *head = (*head)->next; /* update head node */
+	*head = (*head)->next; /* update head node */
 
-        free(temp); /* free original head node */
+	free(temp); /* free original head node */
 
-        return (data);
+	return (data);
 }

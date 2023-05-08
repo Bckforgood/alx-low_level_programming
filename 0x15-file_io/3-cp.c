@@ -1,51 +1,52 @@
 #include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 
-#define BUF_SIZE 1024
+#define BUFFER_SIZE 1024
 
-void exit_with_error(char *message, char *arg, int code) {
-    dprintf(STDERR_FILENO, message, arg);
-    exit(code);
+void error(char *message) {
+    dprintf(STDERR_FILENO, "Error: %s\n", message);
+    exit(EXIT_FAILURE);
 }
 
 int main(int argc, char *argv[]) {
-    int fd_from, fd_to, rd, wr;
-    char buffer[BUF_SIZE];
+    int fd_from, fd_to, read_bytes, write_bytes;
+    char buffer[BUFFER_SIZE];
 
     if (argc != 3) {
-        exit_with_error("Usage: cp file_from file_to\n", "", 97);
+        error("Usage: cp file_from file_to");
     }
 
     fd_from = open(argv[1], O_RDONLY);
     if (fd_from == -1) {
-        exit_with_error("Error: Can't read from file %s\n", argv[1], 98);
+        error("Can't read from file");
     }
 
-    fd_to = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    fd_to = open(argv[2], O_CREAT | O_TRUNC | O_WRONLY, 0664);
     if (fd_to == -1) {
-        exit_with_error("Error: Can't write to %s\n", argv[2], 99);
+        error("Can't write to file");
     }
 
-    while ((rd = read(fd_from, buffer, BUF_SIZE)) > 0) {
-        wr = write(fd_to, buffer, rd);
-        if (wr == -1) {
-            exit_with_error("Error: Can't write to %s\n", argv[2], 99);
+    while ((read_bytes = read(fd_from, buffer, BUFFER_SIZE)) > 0) {
+        write_bytes = write(fd_to, buffer, read_bytes);
+        if (write_bytes != read_bytes) {
+            error("Can't write to file");
         }
     }
 
-    if (rd == -1) {
-        exit_with_error("Error: Can't read from file %s\n", argv[1], 98);
+    if (read_bytes == -1) {
+        error("Can't read from file");
     }
 
     if (close(fd_from) == -1) {
-        exit_with_error("Error: Can't close fd %d\n", fd_from, 100);
+        error("Can't close file descriptor");
     }
 
     if (close(fd_to) == -1) {
-        exit_with_error("Error: Can't close fd %d\n", fd_to, 100);
+        error("Can't close file descriptor");
     }
 
     return 0;

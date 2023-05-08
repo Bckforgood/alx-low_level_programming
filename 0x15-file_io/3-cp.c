@@ -1,79 +1,74 @@
 #include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
 #include <unistd.h>
-#include <elf.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
 
-#define BUF_SIZE 1024
+#define BUFFER_SIZE 1024
 
-/**
- * print_elf_header - Prints the information in the ELF header.
- * @header: A pointer to the ELF header structure.
- */
-void print_elf_header(Elf64_Ehdr *header)
-{
-    printf("ELF Header:\n");
-    printf("  Magic:   ");
-    for (int i = 0; i < EI_NIDENT; i++)
-        printf("%02x ", header->e_ident[i]);
-    printf("\n");
-    printf("  Class:                             %s\n", header->e_ident[EI_CLASS] == ELFCLASS32 ? "ELF32" : "ELF64");
-    printf("  Data:                              %s\n", header->e_ident[EI_DATA] == ELFDATA2LSB ? "2's complement, little endian" : "2's complement, big endian");
-    printf("  Version:                           %d\n", header->e_ident[EI_VERSION]);
-    printf("  OS/ABI:                            %d\n", header->e_ident[EI_OSABI]);
-    printf("  ABI Version:                       %d\n", header->e_ident[EI_ABIVERSION]);
-    printf("  Type:                              %d\n", header->e_type);
-    printf("  Entry point address:               %lx\n", header->e_entry);
+void print_usage(char *program_name) {
+    dprintf(STDERR_FILENO, "Usage: %s file_from file_to\n", program_name);
+    exit(97);
 }
 
-/**
- * main - Displays the information contained in the ELF header at the start of an ELF file.
- * @argc: The number of arguments supplied to the program.
- * @argv: An array of pointers to the arguments.
- *
- * Return: 0 on success, or 98 on error.
- */
-int main(int argc, char *argv[])
-{
-    int fd;
-    Elf64_Ehdr header;
-    ssize_t n;
-
-    if (argc != 2)
-    {
-        fprintf(stderr, "Usage: %s elf_filename\n", argv[0]);
-        return (98);
-    }
-
-    fd = open(argv[1], O_RDONLY);
-    if (fd == -1)
-    {
-        perror("open");
-        return (98);
-    }
-
-    n = read(fd, &header, sizeof(header));
-    if (n == -1)
-    {
-        perror("read");
-        close(fd);
-        return (98);
-    }
-
-    if (n != sizeof(header) ||
-        header.e_ident[EI_MAG0] != ELFMAG0 ||
-        header.e_ident[EI_MAG1] != ELFMAG1 ||
-        header.e_ident[EI_MAG2] != ELFMAG2 ||
-        header.e_ident[EI_MAG3] != ELFMAG3)
-    {
-        fprintf(stderr, "%s: Not an ELF file\n", argv[1]);
-        close(fd);
-        return (98);
-    }
-
-    print_elf_header(&header);
-
-    close(fd);
-    return (0);
+void print_error(char *message, char *filename) {
+    dprintf(STDERR_FILENO, "Error: %s %s\n", message, filename);
+    exit(98);
 }
+
+void print_write_error(char *filename) {
+    dprintf(STDERR_FILENO, "Error: Can't write to %s\n", filename);
+    exit(99);
+}
+
+void print_close_error(int fd) {
+    dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
+    exit(100);
+}
+
+int main(int argc, char **argv) {
+    if (argc != 3) {
+        print_usage(argv[0]);
+    }
+
+    char *file_from = argv[1];
+    char *file_to = argv[2];
+
+    int fd_from = open(file_from, O_RDONLY);
+    if (fd_from == -1) {
+        print_error("Can't read from file", file_from);
+    }
+
+    int fd_to = open(file_to, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+    if (fd_to == -1) {
+        print_error("Can't write to", file_to);
+    }
+
+    char buffer[BUFFER_SIZE];
+    ssize_t bytes_read, bytes_written;
+    while ((bytes_read = read(fd_from, buffer, BUFFER_SIZE)) > 0) {
+        bytes_written = write(fd_to, buffer, bytes_read);
+        if (bytes_written != bytes_read) {
+            print_write_error(file_to);
+        }
+    }
+    if (bytes_read == -1) {
+        print_error("Can't read from file", file_from);
+    }
+
+    int close_from = close(fd_from);
+    if (close_from == -1) {
+        print_close_error(fd_from);
+    }
+
+    int close_to = close(fd_to);
+    if (close_to == -1) {
+        print_close_error(fd_to);
+    }
+
+    return 0;
+}
+

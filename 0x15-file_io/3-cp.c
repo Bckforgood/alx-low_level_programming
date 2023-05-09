@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 	fd_from = open(argv[1], O_RDONLY);
 	check98((ssize_t)fd_from, argv[1], -1, -1);
 	file_permission = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
-	fd_to = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, file_perm);
+	fd_to = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, file_permission);
 	check99((ssize_t)fd_to, argv[2], fd_from, -1);
 	len1 = 1024;
 	while (len1 == 1024)

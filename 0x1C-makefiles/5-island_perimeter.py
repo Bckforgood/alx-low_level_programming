@@ -3,7 +3,6 @@
 
 
 def island_perimeter(grid):
-    
     m, n = len(grid), len(grid[0])
     land, neighbour = 0, 0
     for i in range(m):
@@ -12,6 +11,6 @@ def island_perimeter(grid):
                 land += 1
                 if i < m - 1 and grid[i+1][j] == 1:
                     neighbour += 1
-                if j < n - 1 and grid[i][j + 1] == 1:
-                    neighbour += 1
-    return land * 4 - 2 * neighbour
+                    if j < n - 1 and grid[i][j + 1] == 1:
+                        neighbour += 1
+                        return land * 4 - 2 * neighbour
